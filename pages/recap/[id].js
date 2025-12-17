@@ -1,6 +1,7 @@
+"use client";
 import { useEffect, useState } from "react";
-import { Box, VStack, Heading, Text, Button, Image } from "@chakra-ui/react";
-import { useRouter } from "next/router";
+import { Box, VStack, Text, Button, Image } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 import html2canvas from "html2canvas";
 
 export default function Recap() {
@@ -46,46 +47,40 @@ export default function Recap() {
           {/* Header */}
           <Box>
             <Text fontSize="xs" color="orange.400" letterSpacing="widest">
-              my riding recap {YEAR}
+              MY RIDING RECAP {YEAR}
             </Text>
-            {(data.brand || data.ride) && (
-              <Text fontSize="sm" color="gray.400">
-                {data.brand} {data.ride}
-              </Text>
-            )}
           </Box>
 
           {/* Polaroid */}
-          {data.image && (
-            <Box
-              bg="white"
-              p={2}
-              borderRadius="md"
-              boxShadow="lg"
-              mx="auto"
-              w="85%"
-            >
+          <Box
+            bg="white"
+            p={2}
+            borderRadius="md"
+            boxShadow="lg"
+            mx="auto"
+            w="85%"
+          >
+            {data.image && (
               <Image
                 src={data.image}
                 objectFit="cover"
                 w="100%"
                 h="200px"
               />
-              {data.handle && (
-                <Text mt={2} fontSize="sm" color="gray.700" fontWeight="bold">
-                  @{data.handle}
-                </Text>
-              )}
-            </Box>
-          )}
+            )}
+            <Text mt={2} fontSize="sm" color="gray.700" fontWeight="bold">
+              {data.handle ? `@${data.handle}` : "@yourhandle"}
+            </Text>
+          </Box>
 
           {/* Stats */}
           <VStack spacing={1}>
-            {data.km && <Stat label="🛣️ rode" value={data.km + " km"} />}
-            {data.trips && <Stat label="🧭 rides" value={data.trips} />}
-            {data.speed && <Stat label="💨 fastest" value={data.speed + " km/h"} />}
-            {data.longest && <Stat label="🏔️ longest day" value={data.longest + " km"} />}
-            {data.money && <Stat label="💸 fuelled" value={`₹${data.money}`} />}
+            {data.km && <Stat label="🛣️ This year I rode" value={data.km + " km"} />}
+            {data.trips && <Stat label="🧭 Completed rides" value={data.trips} />}
+            {data.speed && <Stat label="💨 Fastest" value={data.speed + " km/h"} />}
+            {data.longest && <Stat label="🏔️ Longest run in a day" value={data.longest + " km"} />}
+            {data.challans && <Stat label="🚓 Police meetups / Challans" value={data.challans} />}
+            {data.money && <Stat label="💸 Total I spent this year" value={`₹${data.money}`} />}
           </VStack>
 
           {/* Footer */}
