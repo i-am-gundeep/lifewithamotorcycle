@@ -10,16 +10,17 @@ import {
   FormLabel,
   SimpleGrid,
   Image,
-  Flex
+  Flex,
+  Select
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 
-const YEAR = new Date().getFullYear();
-
 export default function Generate() {
+  const YEAR = new Date().getFullYear();
+  const router = useRouter();
+
   const [stats, setStats] = useState({});
   const [image, setImage] = useState(null);
-  const router = useRouter();
 
   const handleChange = (e) =>
     setStats({ ...stats, [e.target.name]: e.target.value });
@@ -32,7 +33,7 @@ export default function Generate() {
     reader.readAsDataURL(file);
   };
 
-  const generate = () => {
+  const generatePoster = () => {
     const id = Math.random().toString(36).substring(2, 8);
     sessionStorage.setItem(
       id,
@@ -42,9 +43,9 @@ export default function Generate() {
   };
 
   return (
-    <Box minH="100vh" bg="#0A0A0A" color="white" p={6}>
-      <Heading textAlign="center" mb={8}>
-        Moto Recap {YEAR}
+    <Box minH="100vh" bg="#141414" color="white" p={6}>
+      <Heading textAlign="center" mb={6} fontSize={{ base: "2xl", md: "3xl" }}>
+        my riding recap {YEAR}
       </Heading>
 
       <Flex
@@ -53,17 +54,62 @@ export default function Generate() {
         maxW="1200px"
         mx="auto"
       >
-
-        {/* LEFT: INPUTS */}
+        {/* Inputs */}
         <VStack spacing={4} flex="1">
+          {/* Bike Brand Dropdown */}
+          <FormControl>
+            <FormLabel fontSize="sm" color="gray.400">
+              choose your bike brand 🏍️
+            </FormLabel>
+            <Select
+              placeholder="Select brand"
+              name="brand"
+              bg="#1A1A1A"
+              border="1px solid #222"
+              onChange={handleChange}
+            >
+              {[
+                "Honda",
+                "Yamaha",
+                "Royal Enfield",
+                "KTM",
+                "Triumph",
+                "BMW",
+                "Kawasaki",
+                "Suzuki",
+                "TVS",
+                "Bajaj",
+                "Hero",
+                "Other"
+              ].map((b) => (
+                <option key={b} value={b}>
+                  {b}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
+
+          {/* Ride Name */}
+          <FormControl>
+            <FormLabel fontSize="sm" color="gray.400">
+              your ride's name ✨
+            </FormLabel>
+            <Input
+              name="ride"
+              bg="#1A1A1A"
+              border="1px solid #222"
+              onChange={handleChange}
+            />
+          </FormControl>
+
+          {/* Other Cute Fields */}
           {[
-            ["Your Instagram Handle", "handle"],
-            ["Bike Name", "bike"],
-            ["Total Kilometers", "km"],
-            ["Trips", "trips"],
-            ["Top Speed (km/h)", "speed"],
-            ["Longest 1-Day Ride (km)", "longest"],
-            ["Money Spent (₹)", "money"]
+            ["how far we rode 🛣️", "km"],
+            ["rides we took 🧭", "trips"],
+            ["fastest moment 💨", "speed"],
+            ["longest day 🏔️", "longest"],
+            ["fuelled with ₹💸", "money"],
+            ["this is me on IG 📸", "handle"]
           ].map(([label, name]) => (
             <FormControl key={name}>
               <FormLabel fontSize="sm" color="gray.400">
@@ -71,16 +117,17 @@ export default function Generate() {
               </FormLabel>
               <Input
                 name={name}
-                bg="#151515"
+                bg="#1A1A1A"
                 border="1px solid #222"
                 onChange={handleChange}
               />
             </FormControl>
           ))}
 
+          {/* Photo Upload */}
           <FormControl>
             <FormLabel fontSize="sm" color="gray.400">
-              Upload Your Favourite Trip Photo
+              favourite memory 📷
             </FormLabel>
             <Input type="file" accept="image/*" onChange={handleImageUpload} />
           </FormControl>
@@ -89,61 +136,98 @@ export default function Generate() {
             colorScheme="orange"
             size="lg"
             w="100%"
-            onClick={generate}
+            onClick={generatePoster}
           >
-            Generate Final Poster
+            Generate Poster
           </Button>
         </VStack>
 
-        {/* RIGHT: LIVE PREVIEW */}
+        {/* Live Preview */}
         <Box flex="1" display="flex" justifyContent="center">
-          <PosterPreview stats={stats} image={image} />
+          <PosterPreview stats={stats} image={image} YEAR={YEAR} />
         </Box>
-
       </Flex>
     </Box>
   );
 }
 
-function PosterPreview({ stats, image }) {
+function PosterPreview({ stats, image, YEAR }) {
   return (
     <Box
-      w="320px"
-      h="560px"
-      bg="#000"
+      w={{ base: "280px", md: "320px" }}
+      h={{ base: "520px", md: "600px" }}
+      bg="#141414"
       borderRadius="2xl"
-      overflow="hidden"
-      position="relative"
       border="1px solid #222"
+      p={4}
+      textAlign="center"
+      display="flex"
+      flexDirection="column"
+      justifyContent="space-between"
     >
+      {/* Header */}
+      <Box>
+        <Text fontSize="xs" color="orange.400" letterSpacing="widest">
+          my riding recap {YEAR}
+        </Text>
+        {(stats.brand || stats.ride) && (
+          <Text fontSize="sm" color="gray.400">
+            {stats.brand} {stats.ride}
+          </Text>
+        )}
+      </Box>
+
+      {/* Polaroid Photo */}
       {image && (
-        <Image
-          src={image}
-          alt="Trip"
-          objectFit="cover"
-          w="100%"
-          h="100%"
-          opacity={0.85}
-        />
+        <Box
+          bg="white"
+          p={2}
+          borderRadius="md"
+          boxShadow="lg"
+          mx="auto"
+          w="85%"
+        >
+          <Image
+            src={image}
+            alt="Trip"
+            objectFit="cover"
+            w="100%"
+            h="160px"
+          />
+          {stats.handle && (
+            <Text mt={2} fontSize="xs" color="gray.700" fontWeight="bold">
+              @{stats.handle}
+            </Text>
+          )}
+        </Box>
       )}
 
-      <Box
-        position="absolute"
-        inset="0"
-        bg="linear-gradient(180deg, transparent, #000)"
-      />
+      {/* Stats */}
+      <VStack spacing={1}>
+        {stats.km && <Stat label="🛣️ rode" value={stats.km + " km"} />}
+        {stats.trips && <Stat label="🧭 rides" value={stats.trips} />}
+        {stats.speed && <Stat label="💨 fastest" value={stats.speed + " km/h"} />}
+        {stats.longest && <Stat label="🏔️ longest day" value={stats.longest + " km"} />}
+        {stats.money && <Stat label="💸 fuelled" value={`₹${stats.money}`} />}
+      </VStack>
 
-      <Box position="absolute" bottom="6" w="100%" textAlign="center">
-        <Text fontSize="xs" color="orange.400">
-          {YEAR} RIDING RECAP
-        </Text>
-        <Heading size="sm">
-          {stats.handle && `@${stats.handle}`}
-        </Heading>
-        <Text fontSize="xs" color="gray.400">
-          Made with ❤️
-        </Text>
-      </Box>
+      {/* Footer */}
+      <Text fontSize="xs" color="gray.500">
+        made with ❤️
+      </Text>
+    </Box>
+  );
+}
+
+function Stat({ label, value }) {
+  return (
+    <Box>
+      <Text fontSize="10px" color="gray.400" letterSpacing="widest">
+        {label}
+      </Text>
+      <Text fontSize="lg" fontWeight="bold">
+        {value}
+      </Text>
     </Box>
   );
 }
