@@ -2,22 +2,21 @@ import { useState } from "react";
 import html2canvas from "html2canvas";
 import {
   Box, Grid, Input, Text, VStack, Image,
-  Select, Heading, Button
+  Select, Heading, Button, FormControl, FormLabel
 } from "@chakra-ui/react";
 
 export default function MotoRecap() {
   const [data, setData] = useState({
-    handle: "lifewithamotorcycle",
-    km: "7.7K",
-    trips: "4",
-    speed: "170",
-    accidents: "0",
-    money: "4.5L",
-    longest: "900",
-    challans: "1",
-    altitude: "14.5K",
-    personality: "WEEKEND WARRIOR",
-    since: "2016"
+    handle: "",
+    km: "",
+    trips: "",
+    speed: "",
+    accidents: "",
+    money: "",
+    longest: "",
+    challans: "",
+    altitude: "",
+    personality: "WEEKEND WARRIOR"
   });
 
   const [image, setImage] = useState(null);
@@ -26,9 +25,9 @@ export default function MotoRecap() {
     setData({ ...data, [e.target.name]: e.target.value });
 
   const upload = e => {
-    const r = new FileReader();
-    r.onload = () => setImage(r.result);
-    r.readAsDataURL(e.target.files[0]);
+    const reader = new FileReader();
+    reader.onload = () => setImage(reader.result);
+    reader.readAsDataURL(e.target.files[0]);
   };
 
   const download = async () => {
@@ -43,30 +42,72 @@ export default function MotoRecap() {
   };
 
   return (
-    <Box minH="100vh" bg="#0B0F0C" color="#EDEDED" p={6}>
+    <Box minH="100vh" bg="#0B0F0C" p={6}>
       <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={8}>
 
         {/* INPUTS */}
-        <VStack align="stretch" spacing={3}>
-          <Heading color="#6CFF9B">MY RIDING RECAP 2025</Heading>
+        <VStack align="stretch" spacing={4}>
+          <Heading className="neon">MY RIDING RECAP 2025</Heading>
 
-          <Input type="file" onChange={upload} />
-          <Input name="handle" value={data.handle} onChange={update} placeholder="IG handle" />
-          <Input name="km" value={data.km} onChange={update} placeholder="Total KM" />
-          <Input name="trips" value={data.trips} onChange={update} placeholder="Trips" />
-          <Input name="speed" value={data.speed} onChange={update} placeholder="Top speed" />
-          <Input name="accidents" value={data.accidents} onChange={update} placeholder="Accidents" />
-          <Input name="money" value={data.money} onChange={update} placeholder="Money spent" />
-          <Input name="longest" value={data.longest} onChange={update} placeholder="Longest ride" />
-          <Input name="challans" value={data.challans} onChange={update} placeholder="Challans" />
-          <Input name="altitude" value={data.altitude} onChange={update} placeholder="Altitude" />
+          <FormControl>
+            <FormLabel>📸 Upload your favourite ride memory</FormLabel>
+            <Input type="file" onChange={upload} />
+          </FormControl>
 
-          <Select name="personality" value={data.personality} onChange={update}>
-            <option>WEEKEND WARRIOR</option>
-            <option>MOUNTAIN HUNTER</option>
-            <option>TOURING ADDICT</option>
-            <option>NIGHT RIDER</option>
-          </Select>
+          <FormControl>
+            <FormLabel>Instagram handle (without @)</FormLabel>
+            <Input name="handle" onChange={update} placeholder="lifewithamotorcycle" />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>Total kilometers ridden this year</FormLabel>
+            <Input name="km" onChange={update} placeholder="7700 / 7.7K" />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>Number of trips completed</FormLabel>
+            <Input name="trips" onChange={update} placeholder="4" />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>Top speed achieved (km/h)</FormLabel>
+            <Input name="speed" onChange={update} placeholder="170" />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>Total accidents (be honest 😄)</FormLabel>
+            <Input name="accidents" onChange={update} placeholder="0" />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>Total money spent on bike & gear</FormLabel>
+            <Input name="money" onChange={update} placeholder="4.5L" />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>Longest ride in one day (km)</FormLabel>
+            <Input name="longest" onChange={update} placeholder="900" />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>Police meetups / Challans</FormLabel>
+            <Input name="challans" onChange={update} placeholder="1" />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>Highest altitude reached (ft)</FormLabel>
+            <Input name="altitude" onChange={update} placeholder="14500" />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>Your riding personality</FormLabel>
+            <Select name="personality" onChange={update}>
+              <option>WEEKEND WARRIOR</option>
+              <option>MOUNTAIN HUNTER</option>
+              <option>TOURING ADDICT</option>
+              <option>NIGHT RIDER</option>
+            </Select>
+          </FormControl>
 
           <Button colorScheme="green" onClick={download}>
             Download Poster
@@ -79,20 +120,14 @@ export default function MotoRecap() {
             id="poster"
             w="360px"
             h="640px"
+            position="relative"
             bg="#0B0F0C"
             p={4}
-            position="relative"
             overflow="hidden"
           >
-            {/* Texture */}
-            <Box
-              position="absolute"
-              inset={0}
-              bgImage="radial-gradient(#ffffff15 1px, transparent 1px)"
-              bgSize="6px 6px"
-            />
+            <Box className="recap-texture" />
 
-            <Text color="#6CFF9B" fontSize="3xl" fontWeight="900">
+            <Text fontFamily="Anton" fontSize="40px" className="neon">
               MOTO RECAP
             </Text>
             <Text fontSize="sm" opacity={0.7}>
@@ -105,36 +140,30 @@ export default function MotoRecap() {
                 "TRIPS": data.trips,
                 "TOP SPEED": data.speed,
                 "ACCIDENTS": data.accidents,
-                "MONEY": data.money,
-                "LONGEST": data.longest,
+                "MONEY SPENT": data.money,
+                "LONGEST RIDE": data.longest,
                 "CHALLANS": data.challans,
                 "ALTITUDE": data.altitude
               }).map(([k, v]) => (
                 <Box key={k}>
                   <Text fontSize="10px" opacity={0.6}>{k}</Text>
-                  <Text fontSize="2xl" fontWeight="900" color="#6CFF9B">{v}</Text>
+                  <Text fontSize="2xl" fontWeight="900" className="neon">{v || "--"}</Text>
                 </Box>
               ))}
             </Grid>
 
-            {/* Polaroid */}
-            <Box
-              position="absolute"
-              bottom="80px"
-              left="16px"
-              bg="#FAFAFA"
-              p={2}
-              w="170px"
-              transform="rotate(-0.2deg)"
-              boxShadow="0 15px 40px rgba(0,0,0,.45)"
-            >
-              {image && <Image src={image} h="120px" w="100%" objectFit="cover" />}
-              <Text fontSize="xs" fontWeight="bold" color="#111">
-                @{data.handle}
-              </Text>
+            {/* POLAROID + PIN */}
+            <Box position="absolute" bottom="70px" left="16px">
+              <Image src="/pin.png" w="26px" position="absolute" top="-14px" left="50%" transform="translateX(-50%)" />
+              <Box className="polaroid" w="170px">
+                {image && <Image src={image} h="120px" w="100%" objectFit="cover" />}
+                <Text fontSize="xs" fontWeight="bold" color="#111">
+                  @{data.handle || "yourhandle"}
+                </Text>
+              </Box>
             </Box>
 
-            <Text position="absolute" bottom="16px" right="16px" color="#6CFF9B">
+            <Text position="absolute" bottom="16px" right="16px" className="neon">
               {data.personality}
             </Text>
           </Box>
