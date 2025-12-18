@@ -1,39 +1,26 @@
 import { useState } from "react";
 import html2canvas from "html2canvas";
 import {
-  Box, Grid, Input, Text, VStack, Image,
-  Select, Heading, Button, FormControl, FormLabel
+  Box, Grid, Text, Input, Select, Image, Button, VStack
 } from "@chakra-ui/react";
 
 export default function MotoRecap() {
-  const [data, setData] = useState({
-    handle: "",
-    km: "",
-    trips: "",
-    speed: "",
-    accidents: "",
-    money: "",
-    longest: "",
-    challans: "",
-    altitude: "",
-    personality: "WEEKEND WARRIOR"
-  });
-
-  const [image, setImage] = useState(null);
+  const [data, setData] = useState({});
+  const [photo, setPhoto] = useState(null);
 
   const update = e =>
     setData({ ...data, [e.target.name]: e.target.value });
 
   const upload = e => {
-    const reader = new FileReader();
-    reader.onload = () => setImage(reader.result);
-    reader.readAsDataURL(e.target.files[0]);
+    const r = new FileReader();
+    r.onload = () => setPhoto(r.result);
+    r.readAsDataURL(e.target.files[0]);
   };
 
   const download = async () => {
     const canvas = await html2canvas(
       document.getElementById("poster"),
-      { scale: 3, backgroundColor: "#0B0F0C" }
+      { scale: 3, backgroundColor: "#050505" }
     );
     const a = document.createElement("a");
     a.download = "moto_recap_2025.png";
@@ -42,133 +29,84 @@ export default function MotoRecap() {
   };
 
   return (
-    <Box minH="100vh" bg="#0B0F0C" p={6}>
+    <Box minH="100vh" p={6}>
       <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={8}>
 
         {/* INPUTS */}
-        <VStack align="stretch" spacing={4}>
-          <Heading className="neon">MY RIDING RECAP 2025</Heading>
+        <VStack align="stretch">
+          <Input placeholder="Total KM ridden" name="km" onChange={update} />
+          <Input placeholder="Trips completed" name="trips" onChange={update} />
+          <Input placeholder="Top speed" name="speed" onChange={update} />
+          <Input placeholder="Accidents?" name="accidents" onChange={update} />
+          <Input placeholder="Money spent ₹" name="money" onChange={update} />
+          <Input placeholder="Longest ride (km)" name="longest" onChange={update} />
+          <Input placeholder="Police challans" name="challans" onChange={update} />
+          <Input placeholder="Highest altitude" name="altitude" onChange={update} />
+          <Input placeholder="Riding since" name="since" onChange={update} />
+          <Input placeholder="Bike model" name="bike" onChange={update} />
 
-          <FormControl>
-            <FormLabel>📸 Upload your favourite ride memory</FormLabel>
-            <Input type="file" onChange={upload} />
-          </FormControl>
+          <Select name="brand" onChange={update}>
+            <option>yamaha</option>
+            <option>ktm</option>
+            <option>triumph</option>
+            <option>royal-enfield</option>
+            <option>honda</option>
+          </Select>
 
-          <FormControl>
-            <FormLabel>Instagram handle (without @)</FormLabel>
-            <Input name="handle" onChange={update} placeholder="lifewithamotorcycle" />
-          </FormControl>
+          <Select name="personality" onChange={update}>
+            <option>Weekend Warrior</option>
+            <option>Tourer</option>
+            <option>Mileage King</option>
+            <option>Speed Junkie</option>
+            <option>Mountain Goat</option>
+          </Select>
 
-          <FormControl>
-            <FormLabel>Total kilometers ridden this year</FormLabel>
-            <Input name="km" onChange={update} placeholder="7700 / 7.7K" />
-          </FormControl>
-
-          <FormControl>
-            <FormLabel>Number of trips completed</FormLabel>
-            <Input name="trips" onChange={update} placeholder="4" />
-          </FormControl>
-
-          <FormControl>
-            <FormLabel>Top speed achieved (km/h)</FormLabel>
-            <Input name="speed" onChange={update} placeholder="170" />
-          </FormControl>
-
-          <FormControl>
-            <FormLabel>Total accidents (be honest 😄)</FormLabel>
-            <Input name="accidents" onChange={update} placeholder="0" />
-          </FormControl>
-
-          <FormControl>
-            <FormLabel>Total money spent on bike & gear</FormLabel>
-            <Input name="money" onChange={update} placeholder="4.5L" />
-          </FormControl>
-
-          <FormControl>
-            <FormLabel>Longest ride in one day (km)</FormLabel>
-            <Input name="longest" onChange={update} placeholder="900" />
-          </FormControl>
-
-          <FormControl>
-            <FormLabel>Police meetups / Challans</FormLabel>
-            <Input name="challans" onChange={update} placeholder="1" />
-          </FormControl>
-
-          <FormControl>
-            <FormLabel>Highest altitude reached (ft)</FormLabel>
-            <Input name="altitude" onChange={update} placeholder="14500" />
-          </FormControl>
-
-          <FormControl>
-            <FormLabel>Your riding personality</FormLabel>
-            <Select name="personality" onChange={update}>
-              <option>WEEKEND WARRIOR</option>
-              <option>MOUNTAIN HUNTER</option>
-              <option>TOURING ADDICT</option>
-              <option>NIGHT RIDER</option>
-            </Select>
-          </FormControl>
-
+          <Input type="file" onChange={upload} />
           <Button colorScheme="green" onClick={download}>
-            Download Poster
+            Download Story
           </Button>
         </VStack>
 
         {/* POSTER */}
-        <Box display="flex" justifyContent="center">
-          <Box
-            id="poster"
-            w="360px"
-            h="640px"
-            position="relative"
-            bg="#0B0F0C"
-            p={4}
-            overflow="hidden"
-          >
-            <Box className="recap-texture" />
+        <Box
+          id="poster"
+          w="360px"
+          h="640px"
+          bgImage="url('/bg.jpg')"
+          bgSize="cover"
+          p={4}
+          position="relative"
+        >
+          <Text className="neon" textAlign="center" fontSize="32px">
+            MOTO RECAP
+          </Text>
 
-            <Text fontFamily="Anton" fontSize="40px" className="neon">
-              MOTO RECAP
-            </Text>
-            <Text fontSize="sm" opacity={0.7}>
-              Year on Two Wheels · 2025
-            </Text>
-
-            <Grid templateColumns="1fr 1fr" gap={3} mt={4}>
-              {Object.entries({
-                "TOTAL KM": data.km,
-                "TRIPS": data.trips,
-                "TOP SPEED": data.speed,
-                "ACCIDENTS": data.accidents,
-                "MONEY SPENT": data.money,
-                "LONGEST RIDE": data.longest,
-                "CHALLANS": data.challans,
-                "ALTITUDE": data.altitude
-              }).map(([k, v]) => (
-                <Box key={k}>
-                  <Text fontSize="10px" opacity={0.6}>{k}</Text>
-                  <Text fontSize="2xl" fontWeight="900" className="neon">{v || "--"}</Text>
-                </Box>
-              ))}
-            </Grid>
-
-            {/* POLAROID + PIN */}
-            <Box position="absolute" bottom="70px" left="16px">
-              <Image src="/pin.png" w="26px" position="absolute" top="-14px" left="50%" transform="translateX(-50%)" />
-              <Box className="polaroid" w="170px">
-                {image && <Image src={image} h="120px" w="100%" objectFit="cover" />}
-                <Text fontSize="xs" fontWeight="bold" color="#111">
-                  @{data.handle || "yourhandle"}
-                </Text>
+          <Grid templateColumns="1fr 1fr" gap={3} mt={4}>
+            {Object.entries(data).slice(0, 8).map(([k, v]) => (
+              <Box key={k}>
+                <Text fontSize="12px">{k.toUpperCase()}</Text>
+                <Text className="handwritten">{v}</Text>
               </Box>
-            </Box>
+            ))}
+          </Grid>
 
-            <Text position="absolute" bottom="16px" right="16px" className="neon">
-              {data.personality}
-            </Text>
+          {photo && (
+            <Box className="polaroid" position="absolute" bottom="70px" left="16px">
+              <Image src={photo} w="140px" h="100px" objectFit="cover" />
+            </Box>
+          )}
+
+          <Box position="absolute" bottom="16px" w="100%">
+            <Grid templateColumns="repeat(4,1fr)" textAlign="center">
+              <Text>Since {data.since}</Text>
+              <Text>🏁</Text>
+              {data.brand && (
+                <Image src={`/brands/${data.brand}.png`} h="20px" mx="auto" />
+              )}
+              <Text>❤️</Text>
+            </Grid>
           </Box>
         </Box>
-
       </Grid>
     </Box>
   );
